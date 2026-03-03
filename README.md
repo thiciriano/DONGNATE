@@ -1,4 +1,4 @@
-# DONG
+# DONGNATE
 
 Aplicativo mobile que conecta ONGs a doadores por meio de um sistema de cadastro e correspondência de itens.
 
