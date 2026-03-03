@@ -1,124 +1,192 @@
-# 🎲 Mesa em Rede
-### Plataforma de Matchmaking para Grupos de RPG
+# DONG
 
-## 👥 Integrantes do Grupo
+Aplicativo mobile que conecta ONGs a doadores por meio de um sistema de cadastro e correspondência de itens.
+
+## Integrantes
 - THIAGO HENRIQUE CIRIANO NEVES
 - ALVARO LUANDREY DE SANTANA DE FREITAS
 - MATHEUS DE OLIVEIRA MOTA
 
----
+## Tecnologias
+- Kotlin
+- Jetpack Compose
+- Ktor
+- PostgreSQL
 
-## 📖 Descrição do Projeto
+## Padrões Aplicados (AV1)
+- Factory Method
+- Facade
 
-O **Mesa em Rede** é uma plataforma mobile voltada para conectar jogadores e mestres de RPG de mesa através de um sistema inteligente de compatibilidade.
-
-O projeto busca solucionar a dificuldade de encontrar grupos compatíveis considerando fatores como:
-- Sistema de RPG preferido
-- Estilo de jogo
-- Nível de experiência
-- Disponibilidade de horários
-
-A aplicação realizará o cadastro de usuários, criação de campanhas, sistema de matchmaking e gerenciamento de sessões.
+# ✅ CHECKLIST AV1 — ORDEM CORRETA DE EXECUÇÃO
 
 ---
 
-## 🎯 Problema
+## 🟢 FASE 1 — Definição (1–2 dias)
 
-Jogadores frequentemente têm dificuldade em encontrar mesas compatíveis com seu estilo e disponibilidade. Mestres enfrentam evasão de jogadores e dificuldade para formar grupos consistentes.
+### 1️⃣ Definir escopo mínimo (congelar escopo)
 
----
-
-## 💡 Solução Proposta
-
-Uma aplicação mobile com backend dedicado que:
-
-- Permite cadastro de jogadores e mestres
-- Calcula compatibilidade entre perfis
-- Cria salas de campanha
-- Gerencia sessões e confirmações
-- Implementa sistema de reputação
-- Oferece notificações de compatibilidade
+* [ ] Nome do projeto
+* [ ] Funcionalidades principais:
+  * [ ] Cadastro de usuário (ONG / Doador)
+  * [ ] Cadastro de item
+  * [ ] Listagem de itens
+  * [ ] Sistema simples de match manual
+* [ ] Escolher oficialmente os 2 padrões:
+  * [ ] Factory Method
+  * [ ] Facade
 
 ---
 
-## 🏗 Arquitetura do Projeto
+## 🟢 FASE 2 — Banco de Dados (BASE DE TUDO)
 
-O sistema será dividido em:
 
-- **Mobile:** Kotlin + Jetpack Compose  
-- **Backend:** Ktor
-- **Banco de Dados:** PostgreSQL  
-- **Arquitetura:** Camadas (Presentation, Application, Domain, Infrastructure)
+### 2️⃣ Modelar o banco 
 
----
+Entidades mínimas:
 
-## 🧩 Padrões de Projeto Aplicados
+* [ ] users
 
-### 📌 1ª Unidade (AV1)
+  * id
+  * name
+  * email
+  * password
+  * role (ONG / DONOR)
 
-- **Factory Method**  
-  Criação de diferentes tipos de perfil (Jogador, Mestre, Iniciante, Veterano).
+* [ ] items
 
-- **Facade**  
-  Interface simplificada para o sistema de matchmaking, abstraindo o cálculo de compatibilidade.
+  * id
+  * name
+  * quantity
+  * urgency
+  * user_id (FK)
 
----
+* [ ] donations
 
-### 📌 2ª Unidade (AV2)
-
-- **Strategy**  
-  Diferentes estratégias de cálculo de compatibilidade (estrito, flexível, por afinidade).
-
-- **Observer**  
-  Sistema de notificações para:
-  - Novo match compatível
-  - Sessão criada
-  - Confirmação de presença
+  * id
+  * donor_id
+  * ong_id
+  * item_id
+  * quantity
 
 ---
 
-## 🔄 Funcionalidades Principais (AV1)
+### 3️⃣ Criar no Supabase
 
-- Cadastro de usuário
-- Criação de perfil (Jogador ou Mestre)
-- CRUD de campanhas
-- Sistema inicial de matchmaking
-
----
-
-## 🚀 Funcionalidades Futuras (AV2)
-
-- Chat interno entre membros
-- Sistema de sessões com confirmação
-- Sistema de avaliação pós-campanha
-- Testes unitários no backend
+* [ ] Criar projeto
+* [ ] Criar tabelas
+* [ ] Criar FKs
+* [ ] Testar inserção manual no SQL Editor
+* [ ] Ativar Row Level Security depois (se der tempo)
 
 ---
 
-## 🗄 Banco de Dados
+## 🟢 FASE 3 — Backend (Kotlin + Ktor ou Spring)
 
-O sistema utilizará banco de dados relacional ou não relacional para armazenar:
+### 4️⃣ Criar projeto backend
 
-- Usuários
-- Perfis
-- Campanhas
-- Sessões
-- Avaliações
+* [ ] Configurar conexão com Supabase (Postgres)
+* [ ] Criar camadas:
 
----
-
-## 🧪 Testes
-
-Na segunda unidade serão implementados testes unitários para:
-
-- Algoritmo de matchmaking
-- Estratégias de compatibilidade
-- Validações de regras de negócio
+  * controller
+  * service
+  * repository
+  * factory
+  * facade
 
 ---
 
-## 🎓 Objetivo Acadêmico
+### 5️⃣ Implementar PRIMEIRA funcionalidade completa (Vertical)
 
-O projeto tem como objetivo aplicar na prática os padrões de projeto estudados na disciplina, integrando frontend, backend e banco de dados em uma aplicação funcional e coesa.
+🔵 Funcionalidade 1: Cadastro de Usuário
+
+* [ ] Criar entidade User
+* [ ] Implementar Factory Method
+* [ ] Criar endpoint POST /users
+* [ ] Testar no Postman
+* [ ] Criar GET /users
+
+---
+
+### 6️⃣ Funcionalidade 2: Cadastro de Item
+
+* [ ] Criar entidade Item
+* [ ] POST /items
+* [ ] GET /items
+* [ ] Vincular ao user_id
+
+---
+
+### 7️⃣ Funcionalidade 3: Criar Doação
+
+Aqui entra o Facade:
+
+* [ ] Criar DonationFacade
+* [ ] Criar endpoint POST /donations
+* [ ] Atualizar estoque
+* [ ] Validar regras básicas
+
+✔ Backend pronto = 70% da AV1 feita.
+
+---
+
+## 🟢 FASE 4 — Frontend (Jetpack Compose)
+
+---
+
+### 8️⃣ Estrutura base do app
+
+* [ ] Criar projeto Compose
+* [ ] Configurar Retrofit
+* [ ] Criar ViewModel base
+
+---
+
+### 9️⃣ Telas mínimas
+
+* [ ] Tela de Cadastro/Login
+* [ ] Tela de Listagem de Itens
+* [ ] Tela de Cadastro de Item
+* [ ] Tela de Doação
+
+---
+
+## 🟢 FASE 5 — Integração Final
+
+* [ ] Testar fluxo completo:
+
+  * ONG cadastra item
+  * Doador visualiza
+  * Doador cria doação
+* [ ] Corrigir bugs
+* [ ] Ajustar README
+* [ ] Preparar explicação dos padrões
+
+---
+
+Divisão por funcionalidades completas:
+
+---
+
+### 👤 Matheus
+
+Responsável por:
+
+* Cadastro de Usuário (back + front + banco)
+
+---
+
+### 👤 Alvaro
+
+Responsável por:
+
+* Cadastro/Listagem de Itens (back + front + banco)
+
+---
+
+### 👤 Thiago
+
+Responsável por:
+
+* Sistema de Doação + Facade
 
 ---
