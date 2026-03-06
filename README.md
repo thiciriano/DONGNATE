@@ -1,24 +1,26 @@
 # DONGNATE
 
-**DONGNATE** é um aplicativo mobile que conecta ONGs a doadores, funcionando como uma plataforma de intermediação digital. 
-O DONGNATE busca promover impacto social ao facilitar a conexão entre organizações sociais e doadores, incentivando solidariedade e colaboração comunitária através da tecnologia. O sistema **não realiza logística, armazenamento ou entrega de itens**.Seu objetivo é apenas conectar quem precisa de doação com quem deseja doar.
+Aplicativo mobile que conecta **ONGs que precisam de doações** com **pessoas que desejam ajudar**.
+
+O sistema permite que organizações publiquem pedidos de itens necessários e que doadores encontrem essas necessidades e se comprometam a realizar doações.
+
+O projeto foi desenvolvido como trabalho da disciplina **Padrões de Projeto**, integrando também conceitos de **UI/UX, desenvolvimento mobile e backend**.
 
 ---
 
-## 🎯 Objetivo do Projeto
+# 🎯 Objetivo
 
-Criar uma aplicação mobile com backend estruturado utilizando **Padrões de Projeto**, permitindo que:
+Criar uma plataforma simples que facilite a conexão entre **ONGs e doadores**, permitindo que necessidades reais sejam atendidas de forma rápida e organizada.
 
-* ONGs publiquem necessidades
-* Doadores encontrem essas necessidades
-* Doadores manifestem interesse em ajudar
-* O sistema registre a conexão entre as partes
+A proposta do sistema é funcionar como um **mural digital de necessidades**, onde:
 
-Após a conexão, a comunicação e entrega acontecem externamente ao sistema.
+* ONGs publicam itens que precisam
+* Doadores encontram essas necessidades
+* Doadores podem se comprometer a realizar a doação
 
 ---
 
-## 👥 Integrantes do Grupo
+# 👥 Integrantes
 
 * THIAGO HENRIQUE CIRIANO NEVES
 * ALVARO LUANDREY DE SANTANA DE FREITAS
@@ -26,183 +28,215 @@ Após a conexão, a comunicação e entrega acontecem externamente ao sistema.
 
 ---
 
-## 🛠 Tecnologias Utilizadas
+# 🧩 Funcionalidades Principais (MVP)
 
-### Backend
+O projeto segue um **MVP minimalista**, contendo apenas as funcionalidades essenciais.
 
-* Kotlin
-* Framework: (Ktor)
-* PostgreSQL (Supabase)
+### Autenticação de usuários
 
-### Mobile
+* Cadastro e login
+* Tipos de usuário:
 
-* Kotlin
-* Jetpack Compose
-* Arquitetura MVVM
-* Retrofit para consumo de API
+  * ONG
+  * Doador
 
-### Banco de Dados
+### Mural de necessidades
 
-* Supabase (PostgreSQL)
+* ONGs podem criar pedidos de doação
+* Doadores podem visualizar pedidos
 
----
+### Criação de pedidos
 
-## 🧠 Padrões de Projeto – AV1
+* Título
+* Descrição
+* Categoria do item
+* ONG responsável
 
-### 1️⃣ Factory Method
+### Registro de doações
 
-Utilizado para criação de usuários:
-
-* ONG
-* DOADOR
-
-Permite encapsular a lógica de criação e evitar condicionais excessivas no código.
-
-### 2️⃣ Facade
-
-Utilizado para centralizar a lógica de criação de conexões (Match), organizando:
-
-* Validações
-* Criação de registros
-* Controle de status
-
-Reduz acoplamento entre controllers e serviços.
+* Doadores podem clicar em **"Quero Doar"**
+* O sistema registra o interesse na doação
 
 ---
 
-## 🗄 Modelagem do Banco de Dados
+# 📱 Telas do Aplicativo
 
-### 📌 users
+O aplicativo possui **4 telas principais**:
+
+1. **Login / Cadastro**
+2. **Feed de necessidades (mural de pedidos)**
+3. **Criar pedido de doação (ONG)**
+4. **Minhas doações**
+
+---
+
+# 🏗 Arquitetura do Sistema
+
+O projeto segue uma arquitetura baseada em **MVVM (Model-View-ViewModel)**.
+
+Fluxo da aplicação:
+
+UI (Jetpack Compose)
+↓
+ViewModel
+↓
+Repository
+↓
+Supabase Client
+↓
+Banco de Dados PostgreSQL
+
+---
+
+# 🧠 Padrões de Projeto Utilizados
+
+Para atender aos requisitos da disciplina, foram utilizados **dois padrões de projeto da primeira unidade**.
+
+---
+
+## Singleton
+
+O padrão **Singleton** foi utilizado para gerenciar a conexão com o backend (Supabase), garantindo que exista apenas **uma única instância do cliente de comunicação com a API** em todo o aplicativo.
+
+Benefícios:
+
+* evita múltiplas conexões com o backend
+* centraliza a configuração da API
+* melhora organização e reutilização do código
+
+Exemplo de uso:
+
+SupabaseManager responsável por fornecer uma única instância do cliente Supabase para toda a aplicação.
+
+---
+
+## Factory Method
+
+O padrão **Factory Method** foi utilizado na criação de pedidos de doação.
+
+Cada pedido pode pertencer a uma categoria diferente, como:
+
+* Alimentos
+* Roupas
+* Higiene
+* Móveis
+
+A criação desses objetos é delegada a uma **Factory**, que decide qual tipo de pedido deve ser instanciado.
+
+Benefícios:
+
+* desacopla a criação de objetos
+* facilita a adição de novas categorias
+* evita repetição de código
+
+---
+
+# 🗄 Estrutura do Banco de Dados
+
+O sistema utiliza **PostgreSQL (via Supabase)** com quatro tabelas principais.
+
+### users
+
+Armazena os usuários do sistema.
+
+Campos principais:
 
 * id
 * name
 * email
-* password
-* role (ONG | DONOR)
+* role (ONG ou DOADOR)
 
-### 📌 needs
+---
+
+### profiles
+
+Informações adicionais do usuário.
+
+Campos principais:
+
+* id
+* user_id
+* phone
+* organization_name
+
+---
+
+### requests
+
+Pedidos de doação criados pelas ONGs.
+
+Campos principais:
 
 * id
 * title
 * description
-* quantity_requested
-* urgency
-* ong_id (FK → users)
+* category
+* ong_id
 
-### 📌 matches
+---
+
+### donations
+
+Registro de doadores interessados em ajudar.
+
+Campos principais:
 
 * id
-* donor_id (FK → users)
-* need_id (FK → needs)
-* message
-* status (PENDING | ACCEPTED | DECLINED)
+* request_id
+* donor_id
+* status
 
 ---
 
-## 🔄 Funcionalidades – AV1
+# 🛠 Tecnologias Utilizadas
 
-### 👤 Usuários
+Frontend / Mobile
 
-* Cadastro de usuário (ONG ou DOADOR)
-* Listagem de usuários
+* Kotlin
+* Jetpack Compose
 
-### 🏢 ONGs
+Backend
 
-* Criar necessidade
-* Listar suas necessidades
+* Supabase
+* API REST
 
-### 🎁 Doadores
+Banco de Dados
 
-* Visualizar necessidades disponíveis
-* Manifestar interesse em doar
+* PostgreSQL
 
-### 🤝 Sistema
+Controle de Versão
 
-* Criar Match
-* Atualizar status do Match
-
----
-
-## 📋 Checklist AV1
-
-### 🟢 Planejamento
-
-* [ ] Definir escopo final
-* [ ] Confirmar padrões escolhidos
-* [ ] Modelar banco no papel
+* Git
+* GitHub
 
 ---
 
-### 🗄 Banco (Supabase)
+# 🚀 Como Executar o Projeto
 
-* [ ] Criar projeto no Supabase
-* [ ] Criar tabela users
-* [ ] Criar tabela needs
-* [ ] Criar tabela matches
-* [ ] Definir chaves estrangeiras
-* [ ] Testar inserção manual via SQL
+1. Clonar o repositório
 
----
+git clone <link-do-repositorio>
 
-### ⚙ Backend
+2. Abrir o projeto no Android Studio
 
-* [ ] Criar estrutura do projeto
-* [ ] Configurar conexão com banco
-* [ ] Implementar entidade User
-* [ ] Implementar Factory Method
-* [ ] Criar endpoint POST /users
-* [ ] Implementar entidade Need
-* [ ] Criar endpoints POST e GET /needs
-* [ ] Implementar MatchFacade
-* [ ] Criar endpoint POST /matches
-* [ ] Criar endpoint PATCH /matches/{id}/status
-* [ ] Testar todos os endpoints no Postman
+3. Configurar as credenciais do Supabase no arquivo de configuração
+
+4. Executar o aplicativo em um emulador ou dispositivo físico
 
 ---
 
-### 📱 Mobile
+# 📊 Status do Projeto
 
-* [ ] Criar estrutura base do app
-* [ ] Configurar Retrofit
-* [ ] Criar tela de cadastro
-* [ ] Criar tela de listagem de necessidades
-* [ ] Criar tela de manifestação de interesse
-* [ ] Integrar com backend
-* [ ] Testar fluxo completo
+Projeto em desenvolvimento para a **AV1 da disciplina de Padrões de Projeto**.
+
+Nesta etapa foram implementadas as funcionalidades principais do sistema e os padrões de projeto exigidos.
 
 ---
 
-### 🎤 Preparação da Apresentação
+# 📚 Disciplina
 
-* [ ] Explicar objetivo social do projeto
-* [ ] Demonstrar funcionamento do app
-* [ ] Explicar onde foi aplicado Factory
-* [ ] Explicar onde foi aplicado Facade
-* [ ] Justificar escolha dos padrões
+Padrões de Projeto
+Professor: Victor Henrique dos Santos Oliveira
 
----
+Curso: Análise e Desenvolvimento de Sistemas
 
-## 📌 Estrutura do Projeto
-
-```
-dongnate/
-├── dongnate-backend/
-├── dongnate-mobile/
-├── database/
-└── docs/
-```
-
----
-
-## 🚀 Futuras Melhorias (AV2)
-
-* Sistema automático de recomendação de Match
-* Notificações
-* Testes unitários no backend
-* Melhorias de UI/UX
-* Deploy online da aplicação
-
----
-
-
----
