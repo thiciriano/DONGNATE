@@ -1,0 +1,22 @@
+# Build e arquivos temporários
+.gradle/
+build/
+/build/
+.kotlin/
+bin/
+gen/
+
+# Configurações da IDE (Android Studio / IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Arquivos locais e sensíveis
+local.properties
+.DS_Store
+
+# Outros
+captures/
+.externalNativeBuild/
+.cxx/
